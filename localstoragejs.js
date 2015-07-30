@@ -56,29 +56,34 @@
     };
 
     function removels() { //移除本地储存
-        var lsname, lastname, lsverNb, lastverNb;
+        var lsname, lastname, lsverNb, lastverNb, key, issuperfluous = 0;
 
         lastname = lastver[idx];
-        lastname = lastname.slice(lastname.lastIndexOf('/') + 1 );
-        lastverNb = lastname.slice(lastname.lastIndexOf('=') +1).replace(/\./g, '');
+        lastname = lastname.slice(lastname.lastIndexOf('/') + 1);
+        lastverNb = lastname.slice(lastname.lastIndexOf('=') + 1).replace(/\./g, '');
         lastname = lastname.slice(0, lastname.lastIndexOf('.js'));
-        
-        for (var i = 0, len = storage.length; i < len; i++) { 
 
-            if(nameRegx.test(storage.key(i))){
+        for (key in storage) {
+            if (nameRegx.test(key)) {
 
-                lsname = storage.key(i).slice(storage.key(i).indexOf('_') + 1, storage.key(i).lastIndexOf('.js'));
-                lsverNb = storage.key(i).slice(storage.key(i).lastIndexOf('=') +1).replace(/\.+/g, '');
-                console.log('lsname: '+lsname, lastname);
-                if(lsname == lastname && lsverNb != lastverNb){
-                    console.log(storage.key(i));
-                    storage.removeItem(storage.key(i));
+                lsname = key.slice(key.indexOf('_') + 1, key.lastIndexOf('.js'));
+                lsverNb = key.slice(key.lastIndexOf('=') + 1).replace(/\.+/g, '');
+                // console.log('lsname: ' + lsname, lsverNb);
+                if (lsname == lastname && lsverNb != lastverNb) {
+                    storage.removeItem(key);
                 }
-
+                if (lsname == lastname) {
+                    // console.log(key);
+                    issuperfluous = 0;
+                }
             }
-            oldver[storage.key(i)] = storage.getItem(storage.key(i));
+            oldver[key] = storage.getItem(key);
+        }
+        if (nameRegx.test(storage.key(idx))) {
+            console.log(storage.key(idx));
         }
         idx++;
+
         // console.log(oldver);
     }
 
