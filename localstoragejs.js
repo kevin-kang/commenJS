@@ -4,7 +4,7 @@
     var oldver = {},
         lsver = [],
         storage = window.localStorage,
-        lspattern = new RegExp('^(' + lastmark + '_).*','g');
+        lspattern = new RegExp(lastmark + '_(.+)');
 
     function ajax(opt) { //简单ajax封装
         var data = JSON.stringify(opt.data),
@@ -61,39 +61,36 @@
         }
     }
 
+    lsver = lsver.reverse();
     
     function removels(){ //移除本地储存
         lsver.forEach(function(v,k){
-            var lastkey = v;
-            var pattern = '';
-            // console.log(lastkey.slice(lastkey.lastIndexOf('/') + 1).match(/(.+)\?ver/)[]);
-            lastkey = !lastkey ? '' : (lastkey.slice(lastkey.lastIndexOf('/') + 1)).slice(0, lastkey.lastIndexOf('?') != -1 ? lastkey.lastIndexOf('?') : lastkey.length);
-
-            if(!!lastkey){
-                pattern = new RegExp(lastmark + '_(.+)');
+            
+            var jspattern = new RegExp(lastmark + '_(.+\?$)'),
+                lsverpattern = /\?ver=(.+)/,
+                lsv = v.match(lsverpattern) ? v.match(lsverpattern)[1].replace(/\./g, '') : 0;
+            // console.log(v, jspattern)
+            if(jspattern.test(v)){
+                
+               var lastv = lastver[k];
+               if(!!lastv){
+                    lastv = lastv.match(lsverpattern)[1].replace(/\./g, '');
+               }
+               console.log(lsv != lastv)
+               if(lsv != lastv){
+                   storage.removeItem(v);
+               }
+               // console.log(lastv)
+                // storage.removeItem(v);
             }
-            console.log(pattern, lsver.toString().match(pattern));
-
-            // if(pattern.test(lskey)){
-            //     console.log('message');
-            // }
-            // var lsjsname = v;
-            // var lastjsname = !!lastver[k] ? lastver[k].slice(lastver[k].lastIndexOf('/') + 1) : '';
-            // console.log(lsjsname);
-            // lastjsname = 'yx_' + lastjsname.match(/(.+)\?ver/)[1];
-            // lsjsname = !!lsjsname ? lsjsname.match(/(.+)\?ver/)[1] : '';
-            // console.log(lastjsname, lsjsname);
-            // if(lastjsname == lsjsname){
-            //     storage.removeItem(lsjsname);
-            // }
         });
     }
-    removels();
+    
     function setLocalStorage() { //更新或者加载本地储存
         var firstItem = lastver.shift(),
             tmpmark = !!firstItem ? (firstItem.lastIndexOf('?') == -1 ? '' : lastmark + '_') : '',
             ver = tmpmark + (!!firstItem ? firstItem.slice(firstItem.lastIndexOf('/') + 1) : '');
-
+        // console.log(ver)
         if (!firstItem || !!oldver[ver]) {
             if(firstItem){
                 globalEval(storage.getItem(ver));
@@ -101,6 +98,7 @@
             }
             return;
         }
+        removels();
         ajax({
             url: firstItem,
             callback: function(res) {

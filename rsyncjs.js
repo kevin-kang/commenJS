@@ -1,6 +1,4 @@
-define(function() {
-    'use strict';
-
+define([],function() {
     function rsyncjs(source, trunkSize, checksumcode) {
         var strResult = "";
         for (var i = 0; i < checksumcode.length; i++) {
@@ -17,7 +15,5 @@ define(function() {
         return strResult;
     }
 
-    return {
-        init: rsyncjs
-    }
+    return rsyncjs;
 });
