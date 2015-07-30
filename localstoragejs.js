@@ -2,9 +2,10 @@
     'use strict';
 
     var oldver = {},
-        lsver = [],
-        storage = window.localStorage,
-        lspattern = new RegExp(lastmark + '_(.+)');
+        clastver = lastver.slice(),
+        nameRegx = new RegExp('^' + lastmark + '_.*$|^zepto*'),
+        idx = 0,
+        storage = window.localStorage;
 
     function ajax(opt) { //简单ajax封装
         var data = JSON.stringify(opt.data),
@@ -54,56 +55,50 @@
         }
     };
 
-    for (var i = 0, len = storage.length; i < len; i++) {
-        if (lspattern.test(storage.key(i)) || /zepto.js+/g.test(storage.key(i))) {
+    function removels() { //移除本地储存
+        var lsname, lastname, lsverNb, lastverNb;
+
+        lastname = lastver[idx];
+        lastname = lastname.slice(lastname.lastIndexOf('/') + 1 );
+        lastverNb = lastname.slice(lastname.lastIndexOf('=') +1).replace(/\./g, '');
+        lastname = lastname.slice(0, lastname.lastIndexOf('.js'));
+        
+        for (var i = 0, len = storage.length; i < len; i++) { 
+
+            if(nameRegx.test(storage.key(i))){
+
+                lsname = storage.key(i).slice(storage.key(i).indexOf('_') + 1, storage.key(i).lastIndexOf('.js'));
+                lsverNb = storage.key(i).slice(storage.key(i).lastIndexOf('=') +1).replace(/\.+/g, '');
+                console.log('lsname: '+lsname, lastname);
+                if(lsname == lastname && lsverNb != lastverNb){
+                    console.log(storage.key(i));
+                    storage.removeItem(storage.key(i));
+                }
+
+            }
             oldver[storage.key(i)] = storage.getItem(storage.key(i));
-            lsver.push(storage.key(i));
         }
+        idx++;
+        // console.log(oldver);
     }
 
-    lsver = lsver.reverse();
-    
-    function removels(){ //移除本地储存
-        lsver.forEach(function(v,k){
-            
-            var jspattern = new RegExp(lastmark + '_(.+\?$)'),
-                lsverpattern = /\?ver=(.+)/,
-                lsv = v.match(lsverpattern) ? v.match(lsverpattern)[1].replace(/\./g, '') : 0;
-            // console.log(v, jspattern)
-            if(jspattern.test(v)){
-                
-               var lastv = lastver[k];
-               if(!!lastv){
-                    lastv = lastv.match(lsverpattern)[1].replace(/\./g, '');
-               }
-               console.log(lsv != lastv)
-               if(lsv != lastv){
-                   storage.removeItem(v);
-               }
-               // console.log(lastv)
-                // storage.removeItem(v);
-            }
-        });
-    }
-    
     function setLocalStorage() { //更新或者加载本地储存
-        var firstItem = lastver.shift(),
+        var firstItem = clastver.shift(),
             tmpmark = !!firstItem ? (firstItem.lastIndexOf('?') == -1 ? '' : lastmark + '_') : '',
             ver = tmpmark + (!!firstItem ? firstItem.slice(firstItem.lastIndexOf('/') + 1) : '');
-        // console.log(ver)
-        if (!firstItem || !!oldver[ver]) {
-            if(firstItem){
-                globalEval(storage.getItem(ver));
-                setLocalStorage();
-            }
-            return;
-        }
-        removels();
+        // if (!firstItem || !!oldver[ver]) {
+        //     if (firstItem) {
+        //         globalEval(storage.getItem(ver));
+        //         setLocalStorage();
+        //     }
+        //     return;
+        // }
         ajax({
             url: firstItem,
             callback: function(res) {
                 try {
                     globalEval(res);
+                    removels();
                     storage.setItem(ver, res);
                 } catch (e) {
                     console.log(e);
