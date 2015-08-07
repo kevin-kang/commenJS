@@ -1,13 +1,14 @@
 (function() {
     'use strict';
 
-    var oldver = {},
-        clastver = lastver.slice(),
-        nameRegx = new RegExp('^' + lastmark + '_.*$|^zepto*'),
+    var lastver = [],
+        jsversion = jsconfig.version,
+        nameRegx = new RegExp('^' + jsconfig.prefix + '.*$'),
         idx = 0,
         storage = window.localStorage;
 
-    function ajax(opt) { //简单ajax封装
+    //简单ajax封装
+    function ajax(opt) {
         var data = JSON.stringify(opt.data),
             url = opt.url,
             type = (opt.type ? opt.type : 'GET').toUpperCase(),
@@ -47,72 +48,72 @@
         };
     };
 
-    function globalEval(str) { // eval方法
+    // eval方法
+    function globalEval(str) {
         try {
-            eval(str);
+            var script = document.createElement('script');
+            script.appendChild(document.createTextNode(str));
+            document.body.appendChild(script);
         } catch (e) {
             console.log(e);
         }
     };
 
-    function removels() { //移除本地储存
-        var lsname, lastname, lsverNb, lastverNb, key, issuperfluous = 0;
+    for (var jspath in jsversion) {
+        lastver.push(jspath + '?v=' + jsversion[jspath]);
+    }
 
-        lastname = lastver[idx];
-        lastname = lastname.slice(lastname.lastIndexOf('/') + 1);
-        lastverNb = lastname.slice(lastname.lastIndexOf('=') + 1).replace(/\./g, '');
-        lastname = lastname.slice(0, lastname.lastIndexOf('.js'));
+    //更新本地储存
+    function updatals(str) {
+        var key, lastname, lastverNb, lsname, lsverNb;
+
+        lastname = str.slice(0, str.lastIndexOf('?'));
+        lastverNb = str.slice(str.lastIndexOf('=') + 1);
 
         for (key in storage) {
             if (nameRegx.test(key)) {
+                lsname = key.slice(key.indexOf('-') + 1, key.lastIndexOf('?'));
+                lsverNb = key.slice(key.lastIndexOf('=') + 1);
 
-                lsname = key.slice(key.indexOf('_') + 1, key.lastIndexOf('.js'));
-                lsverNb = key.slice(key.lastIndexOf('=') + 1).replace(/\.+/g, '');
-                // console.log('lsname: ' + lsname, lsverNb);
-                if (lsname == lastname && lsverNb != lastverNb) {
+                if ((lsname == lastname && lsverNb != lastverNb) || !jsversion.hasOwnProperty(lsname)) {
                     storage.removeItem(key);
                 }
-                if (lsname == lastname) {
-                    // console.log(key);
-                    issuperfluous = 0;
-                }
             }
-            oldver[key] = storage.getItem(key);
         }
-        if (nameRegx.test(storage.key(idx))) {
-            console.log(storage.key(idx));
-        }
-        idx++;
-
-        // console.log(oldver);
     }
 
-    function setLocalStorage() { //更新或者加载本地储存
-        var firstItem = clastver.shift(),
-            tmpmark = !!firstItem ? (firstItem.lastIndexOf('?') == -1 ? '' : lastmark + '_') : '',
-            ver = tmpmark + (!!firstItem ? firstItem.slice(firstItem.lastIndexOf('/') + 1) : '');
-        // if (!firstItem || !!oldver[ver]) {
-        //     if (firstItem) {
-        //         globalEval(storage.getItem(ver));
-        //         setLocalStorage();
-        //     }
-        //     return;
-        // }
-        ajax({
-            url: firstItem,
-            callback: function(res) {
-                try {
-                    globalEval(res);
-                    removels();
-                    storage.setItem(ver, res);
-                } catch (e) {
-                    console.log(e);
+    //设置本地缓存
+    function setLocalStorage() {
+        var firstItem = lastver.shift();
+
+        if (!!firstItem && storage.hasOwnProperty(jsconfig.prefix + firstItem)) {
+            updatals(firstItem);
+            globalEval(storage.getItem(jsconfig.prefix + firstItem));
+            setLocalStorage();
+        } else {
+            ajax({
+                url: firstItem,
+                callback: function(res) {
+                    try {
+                        globalEval(res);
+                        updatals(firstItem);
+                        storage.setItem(jsconfig.prefix + firstItem, res);
+                        setLocalStorage();
+                    } catch (e) {
+                        console.log(e);
+                    }
                 }
-                setLocalStorage();
-            }
-        });
+            });
+            
+        }
     }
 
-    setLocalStorage();
+    //初始化
+    function init() {
+
+        setLocalStorage();
+    };
+
+    init();
 
 })();

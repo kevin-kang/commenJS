@@ -1,5 +1,6 @@
-define([],function() {
-    return function rsyncjs(source, trunkSize, checksumcode) {
+(function() {
+    console.log(this.hasOwnProperty(rsyncjs));
+    function rsyncjs(source, trunkSize, checksumcode) {
         // var strResult = "";
         // for (var i = 0; i < checksumcode.length; i++) {
         //     var code = checksumcode[i];
@@ -13,5 +14,7 @@ define([],function() {
         //     }
         // }
         // return strResult;
+        console.log('message');
     };
-});
+    return this.rsyncjs;
+})();
