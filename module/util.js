@@ -35,7 +35,7 @@
     }
 
     function isNull(data) {
-        return (data == '' || data == undefined || data == null) ? 0 : data;
+        return (data == '' || data == undefined || data == null);
     }
 
     function strLen(str) { //获取中英文字符长度一个中文占两个字符
@@ -55,16 +55,26 @@
         $(ele).addClass(mark).siblings().removeClass(mark);
     }
 
-    function tab(tabBtnBox, tabBtn, tabContBox, tabCont, active) {
+    function tab(tabBtnBox, tabBtn, tabContBox, tabCont, mark, active) {
         var active = active || 'click';
 
         $(tabBtnBox).on(active, tabBtn, function() {
             var idx = $(this).index();
-            
-            cur(this);
+            cur(this,mark);
             $(tabContBox).find(tabCont).eq(idx).show().siblings().hide();
         });
     }
+
+    function query(query){
+        var subUrl = location.search.slice(location.search.indexOf('?') + 1),
+            subArr = subUrl.split('&') || [],
+            querystr = '';
+
+        return subArr.forEach(function(v){
+            v.indexOf(query + '=') === 0 && (querystr = v.slice(query.length + 1))
+        }), querystr;
+    }
+
 
     return {
         tmpl: templeteInit,
@@ -72,6 +82,8 @@
         isIE6: ie6,
         cutStr: cutString,
         isNull: isNull,
-        tab: tab
+        tab: tab,
+        query: query,
+        strLen: strLen
     };
 }));
