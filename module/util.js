@@ -1,12 +1,12 @@
 ;(function(factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD模式
-        define(factory);
+        define(['jquery'],factory);
     } else {
         // 全局模式
-        factory();
+        factory(jQuery);
     }
-}(function() {
+}(function($) {
     'use strict'
     var ie6 = !!window.ActiveXObject && !window.XMLHttpRequest,
         $doc = $(document);
@@ -25,13 +25,16 @@
         }
     }
 
-    function cutString(str, num, strSub) { //截取字符串
-        var btyeLen = strLen(str);
+    function cutString(str, num, strSub) { //截取字符串 num为几个英文
+        var r = /[^\x00-\xff]/g,
+            m = Math.floor(num / 2);
+        if (str.replace(r, "**").length <= num) return str; 
 
-        if (btyeLen > (num * 2)) {
-            return str.substring(0, num) + strSub;
+        for (var i = m; i < str.length; i++) {
+            if (str.substr(0, i).replace(r, "**").length >= num) {
+                return str.substr(0, i) + (strSub ? strSub : '');
+            }
         }
-        return str;
     }
 
     function isNull(data) {
@@ -41,10 +44,10 @@
     function strLen(str) { //获取中英文字符长度一个中文占两个字符
         var i, sum = 0;
         for (i = 0; i < str.length; i++) {
-            if ((str.charCodeAt(i) >= 0) && (str.charCodeAt(i) <= 255)) {
-                sum = sum + 1;
-            } else {
+            if (/[\u4e00-\u9fa5]+/g.test(str[i])) {
                 sum = sum + 2;
+            } else {
+                sum = sum + 1;
             }
         }
         return sum;
@@ -74,7 +77,6 @@
             v.indexOf(query + '=') === 0 && (querystr = v.slice(query.length + 1))
         }), querystr;
     }
-
 
     return {
         tmpl: templeteInit,

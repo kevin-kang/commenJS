@@ -1,4 +1,5 @@
-;(function(factory) {
+;
+(function(factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD模式
         define(factory);
@@ -6,22 +7,28 @@
         // 全局模式
         factory();
     }
-}(function(){
+}(function() {
     'use strict';
     var isload = 0;
-    
-    return function getmore(url, data, cb){
-        var cb = cb || function(){};
 
-        if(!isload){
+    return function getData(opt) {
+        var opt = $.extend({
+            data: '',
+            url: '',
+            type: 'GET',
+            dataType: 'jsonp',
+            cb: cb || function() {}
+        }, opt || {});
+
+        if (!isload) {
             isload = 1;
             $.ajax({
                 url: url, //页数URL
-                type: 'GET',
-                dataType: 'jsonp',
-                data: data
+                type: opt.type,
+                dataType: opt.dataType,
+                data: opt.data
             }).done(function(res) {
-                cb(res);
+                opt.cb(res);
                 isload = 0;
             });
         }

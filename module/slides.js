@@ -31,7 +31,7 @@
             autoPlay: true, // boolean, 开启自动播放
             time: 3e3, // number, 动画播放间隔时间
             callback: function() {} // 当slides加载完成后回调函数
-        }, option);
+        }, option || {});
 
         return $(this).each(function() {
             var elem = $(this),

@@ -1,4 +1,5 @@
-;(function(factory) {
+;
+(function(factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD模式
         define(factory);
@@ -46,21 +47,21 @@
         // console.log($doc.find('.autotips').html());
     }
 
-    function getData(data, that) { //查找数据
-        $.ajax({
-            url: dftopt.url,
-            type: 'GET',
-            dataType: 'jsonp',
-            data: {
-                searchName: data
-            }
-        }).done(function(res) {
-            if (res.retCode == 2000 && res.data.res.length != 0) {
-                renderdropdown(res.data.res);
-                showData(that);
-            }
-        });
-    }
+    // function getData(data, that) { //查找数据
+    //     $.ajax({
+    //         url: dftopt.url,
+    //         type: 'GET',
+    //         dataType: 'jsonp',
+    //         data: {
+    //             searchName: data
+    //         }
+    //     }).done(function(res) {
+    //         if (res.retCode == 2000 && res.data.res.length != 0) {
+    //             renderdropdown(res.data.res);
+    //             showData(that);
+    //         }
+    //     });
+    // }
 
     function showData(target) {
         var that = target;
@@ -95,7 +96,18 @@
                     that.parent().find('.selecthidden').val('');
                 }
                 if (!!that.val()) {
-                    getData(data, that);
+
+                    getData({ //查找数据
+                        data: data,
+                        url: dftopt.url,
+                        cb: function(res) {
+                            if (res.retCode == 2000 && res.data.res.length != 0) {
+                                renderdropdown(res.data.res);
+                                showData(that);
+                            }
+                        }
+                    });
+                    // getData(data, that);
                 }
             }).on('focusout', function() {
                 idx = 0;
