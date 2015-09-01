@@ -9,7 +9,6 @@
     }
 }(function() {
     'use strict';
-    var isload = 0;
 
     return function getData(opt) {
         var opt = $.extend({
@@ -17,20 +16,21 @@
             url: '',
             type: 'GET',
             dataType: 'jsonp',
-            cb: cb || function() {}
+            jsonpCallback: '',
+            cb: function() {}
         }, opt || {});
 
-        if (!isload) {
-            isload = 1;
-            $.ajax({
-                url: url, //页数URL
-                type: opt.type,
-                dataType: opt.dataType,
-                data: opt.data
-            }).done(function(res) {
+        $.ajax({
+            url: opt.url, //页数URL
+            type: opt.type,
+            dataType: opt.dataType,
+            jsonpCallback: opt.jsonpCallback,
+            data: opt.data,
+
+            success: function(res) {
                 opt.cb(res);
-                isload = 0;
-            });
-        }
+            }
+        });
     };
+
 }));

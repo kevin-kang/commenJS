@@ -251,6 +251,8 @@
                     var thisCurIdx = $('.' + option.control + ' .' + option.current, elem).index();
                     curIdx = idx;
                     ctrlAct = true;
+
+                    clearInterval(t);
                     if (idx == thisCurIdx) {
                         return;
                     }
@@ -296,6 +298,7 @@
 
             //下一帧
             $('.' + option.nextBtn, elem).on('click', function() {
+                clearInterval(t);
                 nextIframe();
                 $(this).blur();
                 return false;
@@ -303,6 +306,7 @@
 
             //上一帧
             $('.' + option.prevBtn, elem).on('click', function() {
+                clearInterval(t);
                 prevIframe();
                 $(this).blur();
                 return false;
