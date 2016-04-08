@@ -1,7 +1,8 @@
-;(function(factory) {
+;
+(function(factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD模式
-        define(['jquery'],factory);
+        define(['jquery'], factory);
     } else {
         // 全局模式
         factory(jQuery);
@@ -28,7 +29,7 @@
     function cutString(str, num, strSub) { //截取字符串 num为几个英文
         var r = /[^\x00-\xff]/g,
             m = Math.floor(num / 2);
-        if (str.replace(r, "**").length <= num) return str; 
+        if (str.replace(r, "**").length <= num) return str;
 
         for (var i = m; i < str.length; i++) {
             if (str.substr(0, i).replace(r, "**").length >= num) {
@@ -63,20 +64,32 @@
 
         $(tabBtnBox).on(active, tabBtn, function() {
             var idx = $(this).index();
-            cur(this,mark);
+            cur(this, mark);
             $(tabContBox).find(tabCont).eq(idx).show().siblings().hide();
         });
     }
 
-    function query(query){
+    function query(query) {
         var subUrl = location.search.slice(location.search.indexOf('?') + 1),
             subArr = subUrl.split('&') || [],
             querystr = '';
 
-        return subArr.forEach(function(v){
+        return subArr.forEach(function(v) {
             v.indexOf(query + '=') === 0 && (querystr = v.slice(query.length + 1))
         }), querystr;
     }
+
+    window.applicationCache.addEventListener('updateready', function(e) {
+        //判断.appcache是否变更 
+        if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+            // 浏览器下载一个新的应用缓存 
+            window.applicationCache.swapCache();
+            // 本地更新应用缓存并从新加载页面，获取新的页面信息 
+            window.location.reload();
+        } else {
+            //.appcache清单没有改变， 对服务器没有新的请求 
+        }
+    }, false);
 
     return {
         tmpl: templeteInit,
