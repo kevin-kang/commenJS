@@ -1,6 +1,6 @@
 'use strict';
 let addZero = time => {
-    return time < 10 ? '0' + time : time;
+    return time < 10 ? `0${time}` : time;
 };
 
 $.fn.cuttime = function(stime, etime) {

@@ -2,7 +2,7 @@
 import './swipe.js';
 
 $.fn.slides = function(option) {
-    var option = $.extend({
+    let option = Object.assign({
         preload: false, // boolean, 关闭预载入动画
         cusControl: false, // boolean, 关闭自定义切换按钮容器
         height: 350, // number, 必填，容器高度
@@ -27,7 +27,7 @@ $.fn.slides = function(option) {
     }, option || {});
 
     return $(this).each(function() {
-        var elem = $(this),
+        let elem = $(this),
             cur = option.start - 1,
             container = $('.' + option.container, elem),
             len = container.children().length,
@@ -45,47 +45,47 @@ $.fn.slides = function(option) {
             curIdx = 0;
 
         if (len < 2) { //小于2个图片时不显示左右切换按钮及焦点
-            container.children().fadeIn(option.fadeSpeed, option.fadeEasing, function() {
+            container.children().fadeIn(option.fadeSpeed, option.fadeEasing, () => {
                 loaded = true;
                 option.callback();
             });
-            $('.' + option.nextBtn + ', .' + option.prevBtn, elem).hide();
-            $('.' + option.control, elem).hide();
+            $(`.${option.nextBtn}, .${option.prevBtn}`, elem).hide();
+            $(`.${option.control}`, elem).hide();
             return false;
         }
 
         function isTransition() { //判断是否支持transition
-            var thisBody = document.body || document.documentElement,
+            let thisBody = document.body || document.documentElement,
                 thisStyle = thisBody.style,
                 support = (thisStyle.transition !== undefined || thisStyle.WebkitTransition !== undefined || thisStyle.MozTransition !== undefined || thisStyle.MsTransition !== undefined || thisStyle.OTransition !== undefined) && (navigator.userAgent.toLowerCase().match(/applewebkit\/([\d.]+)/) ? navigator.userAgent.toLowerCase().match(/applewebkit\/([\d.]+)/)[1].split('.')[1] !== '1' : '');
             return support;
         };
 
         if (!option.cusControl) { //渲染焦点
-            for (var i = 1; i < len + 1; i += 1) {
-                tmpArr.push('<li><a href="#nogo" hideFocus>' + (i) + '</a></li>');
+            for (let i = 1; i < len + 1; i += 1) {
+                tmpArr.push(`<li><a href="#nogo" hideFocus>${i}</a></li>`);
             }
-            $('<ul class=' + option.control + ' />').html(tmpArr.join('')).appendTo(elem);
+            $(`<ul class=${option.control} />`).html(tmpArr.join('')).appendTo(elem);
         }
 
         //初始化焦点
-        $("." + option.control, elem).children().eq(cur).addClass(option.current);
+        $(`.${option.control}`, elem).children().eq(cur).addClass(option.current);
 
         //增加prdloadimage图片并且预显示第几个图
         if (option.preload && $('img', container).eq(cur).length) {
             container.css({
-                background: 'url(' + option.preloadImage + ') no-repeat 50% 50%'
+                background: `url(${option.preloadImage}) no-repeat 50% 50%`
             });
-            var img = $('img', container).eq(cur).attr('src');
-            $('img', container).eq(cur).attr('src', img).load(function() {
-                container.children().eq(cur).fadeIn(option.fadeSpeed, option.fadeEasing, function() {
+            let img = $('img', container).eq(cur).attr('src');
+            $('img', container).eq(cur).attr('src', img).load(() => {
+                container.children().eq(cur).fadeIn(option.fadeSpeed, option.fadeEasing, () => {
                     container.removeAttr('style');
                     loaded = true;
                     option.callback();
                 });
             });
         } else {
-            container.children().eq(cur).fadeIn(option.fadeSpeed, option.fadeEasing, function() {
+            container.children().eq(cur).fadeIn(option.fadeSpeed, option.fadeEasing, () => {
                 loaded = true;
                 option.callback();
             });
@@ -94,7 +94,7 @@ $.fn.slides = function(option) {
         //slide动画方式
         function slideAnimate(directions, directionVal) {
 
-            var cssDirection = {
+            let cssDirection = {
                 'left': {
                     left: directionVal
                 },
@@ -123,15 +123,15 @@ $.fn.slides = function(option) {
             container.children().eq(cur).css(cssDirection[directions]).show();
 
             if (isTransition()) {
-                var animateCss3 = {
+                let animateCss3 = {
                         'transition': option.slideSpeed + 'ms'
                     },
                     animateCss3Direction = {
                         'left': {
-                            'transform': 'translate3d(' + (-directionVal) + 'px, 0 ,0)'
+                            'transform': `translate3d(-${directionVal}px, 0 ,0)`
                         },
                         'top': {
-                            'transform': 'translate3d(0, ' + (-directionVal) + 'px, 0)'
+                            'transform': `translate3d(0, ${directionVal}px, 0)`
                         }
                     },
                     animateCss3End = {
@@ -170,7 +170,7 @@ $.fn.slides = function(option) {
                     'opacity': 0
                 }).show().css({
                     'opacity': 1,
-                    'transition': 'opacity ' + option.fadeSpeed + 'ms ease'
+                    'transition': `opacity ${option.fadeSpeed}ms ease`
                 }).on('transitionend', function() {
                     active = false;
                     ctrlAct = false;
@@ -179,13 +179,13 @@ $.fn.slides = function(option) {
                     option.callback();
                 }).siblings().css({
                     'opacity': 0,
-                    'transition': 'opacity ' + option.fadeSpeed + 'ms ease'
-                }).on('transitionend', function() {
+                    'transition': `opacity ${option.fadeSpeed}ms ease`
+                }).on('transitionend', () => {
                     container.children().eq(cur).siblings().removeAttr("style");
                     option.callback();
                 });
             } else {
-                container.children().eq(cur).fadeIn(option.fadeSpeed, option.fadeEasing, function() {
+                container.children().eq(cur).fadeIn(option.fadeSpeed, option.fadeEasing, () => {
                     option.callback();
                     active = false;
                     ctrlAct = false;
@@ -219,7 +219,7 @@ $.fn.slides = function(option) {
                 if (effect == 'fade') {
                     fadeAnimate();
                 } else {
-                    var oDirection = {
+                    let oDirection = {
                         'next': function() {
                             slideAnimate('left', w);
                         },
@@ -239,9 +239,9 @@ $.fn.slides = function(option) {
         };
 
         //焦点控制显示
-        $('.' + option.control, elem).children().each(function(idx, item) {
+        $(`.${option.control}`, elem).children().each(function(idx, item) {
             $(this).on(eventType, function() {
-                var thisCurIdx = $('.' + option.control + ' .' + option.current, elem).index();
+                let thisCurIdx = $(`.${option.control} .${option.current}`, elem).index();
                 curIdx = idx;
                 ctrlAct = true;
 
@@ -264,9 +264,7 @@ $.fn.slides = function(option) {
                         animate('next', effect);
                     }
                 }
-
-                $(this).blur();
-            });
+            }).blur();
         });
 
         function nextIframe() { //下一帧
@@ -279,7 +277,7 @@ $.fn.slides = function(option) {
         }
 
         if ('ontouchend' in document) {
-            var target = $('img', elem);
+            let target = $('img', elem);
             if ((direction == 'next' || effect == 'fade')) {
 
                 target.on('swipeleft', nextIframe).on('swiperight', prevIframe);
@@ -289,26 +287,24 @@ $.fn.slides = function(option) {
         }
 
         //下一帧
-        $('.' + option.nextBtn, elem).on('click', function() {
+        $(`.${option.nextBtn}`, elem).on('click', () => {
             clearInterval(t);
             nextIframe();
-            $(this).blur();
             return false;
-        });
+        }).blur();
 
         //上一帧
-        $('.' + option.prevBtn, elem).on('click', function() {
+        $(`.${option.prevBtn}`, elem).on('click', () => {
             clearInterval(t);
             prevIframe();
-            $(this).blur();
             return false;
-        });
+        }).blur();
 
         //自动播放
         if (option.autoPlay) {
-            elem.on('mouseenter', function() {
+            elem.on('mouseenter', () => {
                 clearInterval(t);
-            }).on('mouseleave', function(event) {
+            }).on('mouseleave', event => {
                 t = setInterval(function() {
                     animate(direction, effect)
                 }, option.time);

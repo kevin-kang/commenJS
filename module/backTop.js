@@ -23,7 +23,7 @@ let $win = $(window),
         }).scroll();
     },
     backTop = (ele, speed) => { // 返回顶部按钮及速度
-        $doc.on('click', ele, function() {
+        $doc.on('click', ele,() => {
             backTopSet(speed);
         });
         fadeBackTop(ele);

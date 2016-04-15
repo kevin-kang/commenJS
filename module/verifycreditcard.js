@@ -1,6 +1,6 @@
 $.fn.formatcreditcard = function(success, error) {
-    return this.forEach((ele, i) => {
-        var regnum = /[^\d+$]/g,
+    return this.each((i,ele) => {
+        let regnum = /[^\d+$]/g,
             $target = $(ele);
 
         $target.on('keyup touchend', function() {

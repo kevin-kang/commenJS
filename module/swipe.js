@@ -17,13 +17,13 @@ let swipe = (function() {
         $doc = $(document);
 
     function start(e) {
-        var touch = e.originalEvent ? e.originalEvent.changedTouches[0] : (e.changedTouches ? e.changedTouches[0] : e);
+        let touch = e.originalEvent ? e.originalEvent.changedTouches[0] : (e.changedTouches ? e.changedTouches[0] : e);
         x1 = touch.pageX;
         y1 = touch.pageY;
     };
 
     function stop(e) {
-        var touch = e.originalEvent ? e.originalEvent.changedTouches[0] : (e.changedTouches ? e.changedTouches[0] : e);
+        let touch = e.originalEvent ? e.originalEvent.changedTouches[0] : (e.changedTouches ? e.changedTouches[0] : e);
         x2 = touch.pageX;
         y2 = touch.pageY;
     };

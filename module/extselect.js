@@ -1,6 +1,6 @@
 'use strict';
 $.fn.extselect = function() {
-    return this.forEach(ele => {
+    return this.each((i, ele) => {
         let $target = $(ele),
             $select = $target.find('select'),
             $selecttxt = '',

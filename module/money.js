@@ -1,6 +1,6 @@
 'use strict';
 $.fn.inputMoney = function() {
-    return this.forEach(function(ele) {
+    return this.each((i,ele) => {
         let target = $(ele),
             numberRegexp = /[^\d|\.{1}]+?/g,
             dotRegexp = /[\.]+?/g,
