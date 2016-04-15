@@ -29,7 +29,7 @@ $.fn.slides = function(option) {
     return $(this).each(function() {
         let elem = $(this),
             cur = option.start - 1,
-            container = $('.' + option.container, elem),
+            container = $(`.${option.container}`, elem),
             len = container.children().length,
             w = option.width,
             h = option.height,
@@ -67,7 +67,7 @@ $.fn.slides = function(option) {
             }
             $(`<ul class=${option.control} />`).html(tmpArr.join('')).appendTo(elem);
         }
-
+        
         //初始化焦点
         $(`.${option.control}`, elem).children().eq(cur).addClass(option.current);
 
