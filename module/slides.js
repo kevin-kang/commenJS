@@ -1,5 +1,5 @@
 'use strict';
-require('./swipe.js');
+import './swipe.js';
 
 $.fn.slides = function(option) {
     var option = $.extend({

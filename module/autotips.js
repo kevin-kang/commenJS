@@ -47,22 +47,6 @@
         // console.log($doc.find('.autotips').html());
     }
 
-    // function getData(data, that) { //查找数据
-    //     $.ajax({
-    //         url: dftopt.url,
-    //         type: 'GET',
-    //         dataType: 'jsonp',
-    //         data: {
-    //             searchName: data
-    //         }
-    //     }).done(function(res) {
-    //         if (res.retCode == 2000 && res.data.res.length != 0) {
-    //             renderdropdown(res.data.res);
-    //             showData(that);
-    //         }
-    //     });
-    // }
-
     function showData(target) {
         var that = target;
 

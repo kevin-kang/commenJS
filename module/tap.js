@@ -1,4 +1,4 @@
-exports.tap = (function() {
+let tap = (function() {
     var $doc = $(document),
         startTime = '',
         endTime = '',
@@ -42,3 +42,5 @@ exports.tap = (function() {
         }
     });
 })();
+
+export default tap;

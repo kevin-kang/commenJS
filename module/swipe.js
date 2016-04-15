@@ -6,7 +6,7 @@
  * swiperight    右滑事件
  */
 'use strict';
-exports.swipe = (function() {
+let swipe = (function() {
     var x = 80,
         y = 80,
         x1 = 0,
@@ -76,3 +76,5 @@ exports.swipe = (function() {
     });
 
 })();
+
+export default swipe;
