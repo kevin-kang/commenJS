@@ -1,22 +1,14 @@
 var gulp = require('gulp'),
-    path = require('path'),
     gutil = require('gulp-util'),
     webpack = require('webpack'),
     connect = require('gulp-connect'),
-    sass = require('gulp-sass'),
     copy = require('gulp-copy'),
-    rename = require('gulp-rename'),
-    cache = require('gulp-cache'),
     plumber = require('gulp-plumber'), //有错误不中断gulp
     changed = require('gulp-changed'), // 仅仅传递更改过的文件
     webpackConfig = require('./webpack.config.babel.js'),
-    // webpackConfig = require('./webpack.config.js'),
-    // px3rem = require('gulp-px3rem');
-    devPath = 'H5epay', //开发目录
-    assets = 'assetsH5', //上线目录
-    initCompressImgCounter = 0, // 压缩图片初始次数
-    maxCompressImgCounter = 1, // 压缩图片最大次数
-    paths = [devPath + '/*.html', devPath + '/**/*.{scss,js}']; //文件路劲
+    devPath = 'src', //开发目录
+    assets = 'dest', //上线目录
+    paths = [devPath + '/*.html', devPath + '/**/*.+(scss|js|jpg|gif|png|svg)'];//文件路劲
 
 webpackConfig.output.path = assets;//设置webpackconfig输出路径
 
@@ -26,7 +18,7 @@ webpackConfig.output.publicPath = '/' + assets + '/';//设置webpackconfig公共
 gulp.task('watch', function() {
     var watcher = gulp.watch(paths, ['webpack']);
     watcher.on('change', function(){
-        gulp.start('livereload');
+        gulp.start('copy','livereload');
     });
 });
 
@@ -38,6 +30,16 @@ gulp.task('livereload', function() {
         .pipe(changed(assets))
         .pipe(plumber())
         .pipe(connect.reload());
+});
+
+//copy开发目录下的images文件夹
+gulp.task('copy', function() {
+    gulp.src(devPath + '/images/**')
+        .pipe(changed(assets))
+        .pipe(plumber())
+        .pipe(copy('../' + assets, {
+            prefix: 1
+        }));
 });
 
 //webpack打包任务

@@ -60,9 +60,7 @@ a { text-decoration:none; color: #333;
     &:hover { text-decoration:none;}
 }
 
-%overflow-scrolling { -webkit-overflow-scrolling:touch; overflow-scrolling:touch; overflow: auto;}
-
-%line-clamp { -webkit-line-clamp:}
+%overflow-scrolling { -webkit-overflow-scrolling:touch; overflow-scrolling:touch; overflow: auto;} //要显示滚动条的地方添加此样式
 
 %els { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 
