@@ -11,6 +11,7 @@ var webpack = require('webpack'),
         debug: true,
         entry: { //js入口
             index: './src/js/index.js'
+            common: ['./src/scss/reset.scss','./src/js/util.js'] //提取公共js，css
         },
         output: {
             path: '', //输出目录的配置，模板、样式、脚本、图片等资源的路径配置都相对于它
