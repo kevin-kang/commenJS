@@ -11,7 +11,7 @@
   "devDependencies": {
     "babel-core": "latest",
     "babel-loader": "latest",
-    "babel-plugin-transform-runtime": "latest",
+    "babel-runtime": "latest",
     "babel-preset-es2015": "latest",
     "css-loader": "latest",
     "extract-text-webpack-plugin": "latest",
