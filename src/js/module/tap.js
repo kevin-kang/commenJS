@@ -1,46 +1,58 @@
 let tap = (function() {
     let $doc = $(document),
-        startTime = '',
-        endTime = '',
-        limt = 60,
-        x1 = 0,
-        y1 = 0,
-        x2 = 0,
-        y2 = 0,
-        isMove = false,
-        tap = $.Event('tap');
+        limt = 30,
+        deltaX = 0,
+        deltaY = 0,
+        tapTimeout,
+        touch = {};
+
+    function cancelAll() {
+        if(tapTimeout) clearTimeout(tapTimeout);
+        tapTimeout = null;
+        touch = {};
+    }
 
     $doc.on('touchstart', e => {
-        let touch = e.originalEvent ? e.originalEvent.changedTouches[0] : (e.changedTouches ? e.changedTouches[0] : e);
+        let firstTouch = e.touches[0];
 
-        starTime = Date.now();
-        x1 = touch.pageX;
-        y1 = touch.pageY;
+        touch.el = $('tagName' in firstTouch.target ? firstTouch.target : firstTouch.target.parentNode);
+
+        if (e.touches && e.touches.length === 1 && touch.x2) {
+            touch.x2 = undefined
+            touch.y2 = undefined
+        }
+        touch.last = Date.now();
+        touch.startTime = Date.now();
+
+        touch.x1 = touch.pageX;
+        touch.y1 = touch.pageY;
 
     }).on('touchmove', e => {
-        let touch = e.originalEvent ? e.originalEvent.changedTouches[0] : (e.changedTouches ? e.changedTouches[0] : e);
+        let firstTouch = e.touches[0];
 
-        if (touch.pageX - x1 > limt || touch.pageY - y1 > limt) {
-            e.stopPropagation();
-            isMove = true;
-        }
+        touch.x2 = firstTouch.pageX;
+        touch.y2 = firstTouch.pageY;
+
+        deltaX += Math.abs(touch.x1 - touch.x2);
+        deltaY += Math.abs(touch.y1 - touch.y2);
 
     }).on('touchend', e => {
+        if (deltaX < limt && deltaY < limt) {
+            tapTimeout = setTimeout(() => {
+                var tap = $.Event('tap');
 
-        endTime = e.timeStamp;
-
-        if (!isMove && endTime - starTime <= 200) {
-            setTimeout(() => {
-                $(e.target).trigger(tap);
-                if (tap.isDefaultPrevented()) {
-                    e.preventDefault();
-                }
-                e.stopPropagation();
-            }, 50);
-        } else {
-            isMove = false;
+                tap.cancelTouch = cancelAll;
+                touch.el.trigger(tap);
+            }, 0);
         }
-    });
+        deltaX = deltaY = 0
+    }).on('touchcancel', cancelAll);
+
+    $(window).on('scroll', cancelAll);
+
+    $.fn.tap = function(callback) {
+        return this.on('tap', callback);
+    }
 })();
 
 export default tap;
