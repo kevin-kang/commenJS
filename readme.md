@@ -17,3 +17,4 @@ scss编译打包，ES6编译打包，静态文件压缩拷贝，HTML文件模板
 HtmlWebpackPlugin 插件增减，webpack.ProvidePlugin 插件对$引用修改，modules下的loaders 加载器修改
 
 # 新建分支测试
+合并不上呢？
