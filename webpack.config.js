@@ -1,17 +1,18 @@
-var webpack = require('webpack'),
-    commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
+import webpack from 'webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+
+let commonsPlugin = new webpack.optimize.CommonsChunkPlugin({
         name: 'common',
         filename: 'js/[name].js'
     }),
-    ExtractTextPlugin = require('./node_modules/extract-text-webpack-plugin'),
     ExtractSCSS = new ExtractTextPlugin('css/[name].css'),
-    HtmlWebpackPlugin = require('html-webpack-plugin'),
     config = {
         devtool: 'source-map',
         debug: true,
-        entry: { //js入口
-            index: './src/js/index.js'
-            common: ['./src/scss/reset.scss','./src/js/util.js'] //提取公共js，css
+        entry: {
+            index: './src/js/index.js',
+            common: ['./src/scss/reset.scss', './src/js/module/util.js']
         },
         output: {
             path: '', //输出目录的配置，模板、样式、脚本、图片等资源的路径配置都相对于它
@@ -22,9 +23,8 @@ var webpack = require('webpack'),
         plugins: [
             new webpack.ProvidePlugin({ //引入全局zepto
                 $: 'webpack-zepto'
-                    // $: 'Zepto'
             }),
-            commonsPlugin, // 提取公共js文件
+            commonsPlugin,
             ExtractSCSS, //单独使用link标签加载css并设置路径，相对于output配置中的publickPath
             //压缩js
             new webpack.optimize.UglifyJsPlugin({
@@ -46,17 +46,16 @@ var webpack = require('webpack'),
             })
         ],
         module: {
-            loaders: [
-                {//编辑压缩小于10k的文件为data:image格式
+            loaders: [{
                     test: /\.(png|jpg|gif|svg)$/,
-                    loader: 'url?limit=10000&name=css/img/[name].[ext]?[hash]'
+                    loader: 'url?limit=1000&name=css/img/[name].[ext]?[hash]'
 
                 },
-                { //编译html文件为字符串
+                {
                     test: /\.html$/,
                     loader: 'html'
                 }, 
-                { //编译es6文件
+                {
                     test: /\.js?$/,
                     exclude: /(node_modules)/,
                     loader: 'babel',
@@ -72,9 +71,9 @@ var webpack = require('webpack'),
                 }
             ]
         },
-        sassLoader: { //压缩css
+        sassLoader: {
             outputStyle: 'compressed'
         }
     };
 
-module.exports = config;
+export default config;
