@@ -16,14 +16,13 @@ webpackConfig.output.publicPath = '/' + assets + '/';//设置webpackconfig公共
 
 //监听文件变化且自动刷新文件
 gulp.task('watch', function() {
-    var watcher = gulp.watch(paths, ['webpack']);
-    watcher.on('change', function(){
-        gulp.start('copy','livereload');
+    gulp.watch(paths, ['livereload'], function(event){
+        console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
     });
 });
 
 //自动刷新任务
-gulp.task('livereload', function() {
+gulp.task('livereload', ['copy'], function() {
     gulp.src(paths)
         //'changed' 任务需要提前知道目标目录位置
         // 才能找出哪些文件是被修改过的
@@ -32,19 +31,17 @@ gulp.task('livereload', function() {
         .pipe(connect.reload());
 });
 
-//copy开发目录下的images文件夹
-gulp.task('copy', function() {
-    gulp.src(devPath + '/images/**')
+//copy开发目录下的images文件夹 先执行webpack，再执行copy
+gulp.task('copy', ['webpack'], function() {
+    return gulp.src(devPath + '/images/**')
         .pipe(changed(assets))
         .pipe(plumber())
-        .pipe(copy('../' + assets, {
-            prefix: 1
-        }));
+        .pipe(gulp.dest(assets +'/images'));
 });
 
 //webpack打包任务
 gulp.task('webpack', function(cb) {
-    webpack(webpackConfig, function(err, stats) {
+    return webpack(webpackConfig, function(err, stats) {
         if (err) throw new gutil.PluginError('webpack', err);
         gutil.log("[webpack]", stats.toString({
             colors: true
