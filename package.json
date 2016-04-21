@@ -3,15 +3,19 @@
   "version": "1.0.0",
   "description": "base-package",
   "main": "gulpfile.js",
+  "babel": {
+    "presets": ["es2015"]
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "kevin",
   "license": "ISC",
   "devDependencies": {
+    "babel": "latest",
     "babel-core": "latest",
     "babel-loader": "latest",
-    "babel-runtime": "latest",
+    "babel-plugin-transform-runtime": "latest",
     "babel-preset-es2015": "latest",
     "css-loader": "latest",
     "extract-text-webpack-plugin": "latest",
@@ -19,7 +23,6 @@
     "gulp": "latest",
     "gulp-changed": "latest",
     "gulp-connect": "latest",
-    "gulp-copy": "latest",
     "gulp-plumber": "latest",
     "gulp-util": "latest",
     "html-loader": "latest",
@@ -33,7 +36,6 @@
     "webpack-zepto": "latest"
   },
   "dependencies": {
-    "html-loader": "^0.4.3"
   },
   "keywords": [
     ""
