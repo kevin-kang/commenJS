@@ -3,12 +3,10 @@ let tap = (function() {
         limt = 30,
         deltaX = 0,
         deltaY = 0,
-        tapTimeout,
+        tapDelay = 200,
         touch = {};
 
     function cancelAll() {
-        if(tapTimeout) clearTimeout(tapTimeout);
-        tapTimeout = null;
         touch = {};
     }
 
@@ -22,7 +20,6 @@ let tap = (function() {
             touch.y2 = undefined
         }
         touch.last = Date.now();
-        touch.startTime = Date.now();
 
         touch.x1 = touch.pageX;
         touch.y1 = touch.pageY;
@@ -37,21 +34,28 @@ let tap = (function() {
         deltaY += Math.abs(touch.y1 - touch.y2);
 
     }).on('touchend', e => {
-        if (deltaX < limt && deltaY < limt) {
-            tapTimeout = setTimeout(() => {
-                var tap = $.Event('tap');
+        if (deltaX < limt && deltaY < limt && (e.timeStamp - touch.last) < tapDelay) {
 
-                tap.cancelTouch = cancelAll;
-                touch.el.trigger(tap);
-            }, 0);
+            let tap = $.Event('tap');
+
+            touch.el.trigger(tap);
+
+            if (tap.isDefaultPrevented()) {
+                e.preventDefault();
+            }
+            if (tap.isPropagationStopped()) {
+                e.stopPropagation();
+            }
+
+            
         }
-        deltaX = deltaY = 0
+        deltaX = deltaY = 0;
     }).on('touchcancel', cancelAll);
 
     $(window).on('scroll', cancelAll);
 
     $.fn.tap = function(callback) {
-        return this.on('tap', callback);
+        return this.on('click', callback);
     }
 })();
 
