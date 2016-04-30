@@ -33,6 +33,7 @@
     "style-loader": "latest",
     "url-loader": "latest",
     "webpack": "latest",
+    "minimist": "latest",
     "webpack-zepto": "latest"
   },
   "dependencies": {
