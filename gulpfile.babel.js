@@ -128,15 +128,15 @@ gulp.task('default', ['constants'], () => {
 //打包测试，准生成，生产环境 --test, --repro, --pro 三个参数
 //gulp allpack --test mobile 第一个参数为打包测试环境，第二个参数为要打包的目录
 gulp.task('allpack', ['constants'], () => {
-    gulp.start('copy');
+    gulp.start('copy', 'help');
 });
 
 gulp.task('help', () => {
     console.log('++++++++++++++++++++++++++++++++');
     console.log('xxx代表目录名');
     console.log('gulp --dev xxx 开启本地静态服务器和自动刷新功能以及打包并copy到dest目录');
-    console.log('gulp --test xxx 测试服务器打包并把对应文件copy到test目录下');
-    console.log('gulp --repro xxx 准生产服务器打包并把对应文件copy到repro目录下');
-    console.log('gulp --pro xxx 生产服务器打包并把对应文件copy到pro目录下');
+    console.log('gulp allpack --test xxx 测试服务器打包并把对应文件copy到test目录下');
+    console.log('gulp allpack --repro xxx 准生产服务器打包并把对应文件copy到repro目录下');
+    console.log('gulp allpack --pro xxx 生产服务器打包并把对应文件copy到pro目录下');
     console.log('++++++++++++++++++++++++++++++++');
 });
