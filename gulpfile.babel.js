@@ -19,7 +19,7 @@ let args = process.argv.slice(2),
     assets = dest, //默认目录为本地dest目录
     paths = [`${devPath}/*.html`, `${devPath}/**/*.+(scss|js|jpg|gif|png|svg)`, `!${devPath}/**/config.js`]; //文件路劲
 
-let string_src = (filename, string) => { //把特定的字符转成流
+let stringSrc = (filename, string) => { //把特定的字符转成流
     let src = require('stream').Readable({
         objectMode: true
     })
@@ -63,11 +63,11 @@ gulp.task('constants', () => {
         envConfig = apiUrl.dev;
     }
 
-    conConfig = `let baseUrl = { url: ${JSON.stringify(envConfig)}}; export default baseUrl;`;
+    conConfig = `const baseUrl = ${JSON.stringify(envConfig)}; export default baseUrl;`;
 
     //生成config.js文件
-    return string_src('config.js', conConfig)
-        .pipe(gulp.dest(`${devPath}/js/`));
+    return stringSrc('base_url.js', conConfig)
+        .pipe(gulp.dest(`${devPath}/js/modules/`));
 });
 
 //监听文件变化且自动刷新文件
@@ -134,9 +134,9 @@ gulp.task('allpack', ['constants'], () => {
 gulp.task('help', () => {
     console.log('++++++++++++++++++++++++++++++++');
     console.log('xxx代表目录名');
-    console.log('gulp --dev xxx 开启本地静态服务器和自动刷新功能以及打包');
-    console.log('gulp --test xxx 测试服务器打包');
-    console.log('gulp --repro xxx 准生产服务器打包');
-    console.log('gulp --pro xxx 生产服务器打包');
+    console.log('gulp --dev xxx 开启本地静态服务器和自动刷新功能以及打包并copy到dest目录');
+    console.log('gulp --test xxx 测试服务器打包并把对应文件copy到test目录下');
+    console.log('gulp --repro xxx 准生产服务器打包并把对应文件copy到repro目录下');
+    console.log('gulp --pro xxx 生产服务器打包并把对应文件copy到pro目录下');
     console.log('++++++++++++++++++++++++++++++++');
 });
