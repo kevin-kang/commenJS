@@ -1,6 +1,6 @@
 {
     "dev": "",
     "test": "",
-    "repro": "",
+    "repro": "http://10.100.140.103:8090/yisecpayweb",
     "pro": "http://service.fuqian.la"
 }
