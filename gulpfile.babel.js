@@ -7,10 +7,11 @@ import changed from 'gulp-changed';
 import apiUrl from './config.json'; //配置不同环境下的API接口 默认dev ->本地环境，test ->测试环境，repro ->准生成环境，pro ->生成环境
 import opt from 'minimist'; //获取命令行参数
 
+
 let args = process.argv.slice(2),
     argsOpt = opt(args),
     basePaths = `${args[2]}` == 'undefined' ? `${args[1]}` : `${args[2]}`,
-    webpackConfig = require(`./webpack.config/webpack.config.${basePaths}.babel.js`), //根据gulp参数获取不同webpack配置文件
+    webpackConfig = require(`./webpack.config.babel.js`), //根据gulp参数获取不同webpack配置文件
     devPath = `src/${basePaths}`, //开发目录
     dest = `dest/${basePaths}`, //本地编译后目录
     testPath = `test/${basePaths}`, //测试环境目录
@@ -67,7 +68,7 @@ gulp.task('constants', () => {
 
     //生成config.js文件
     return stringSrc('base_url.js', conConfig)
-        .pipe(gulp.dest(`${devPath}/js/modules/`));
+        .pipe(gulp.dest(`${devPath}/js/module/`));
 });
 
 //监听文件变化且自动刷新文件
@@ -99,17 +100,30 @@ gulp.task('copy', ['webpack'], () => {
         .pipe(changed(assets))
         .pipe(plumber())
         .pipe(gulp.dest(assets));
+
 });
+
+let showErrors = arr => {
+    let str = '',beepNum = 0;
+    arr.forEach((v) => {
+        str += `${v.message}\n`;
+        beepNum ++;
+    });
+    gutil.beep(beepNum);
+    gutil.log(gutil.colors.red(`[Errors => ${arr.length}]\n${str}`));
+    
+};
 
 //webpack打包任务
 gulp.task('webpack', cb => {
     return webpack(webpackConfig.default, (err, stats) => {
-        if (err) throw new gutil.PluginError('webpack', err);
-        gutil.log("[webpack]", stats.toString({
-            colors: true
-        }));
+        if(stats.compilation.errors.length){
+            let errArr = stats.compilation.errors;
+            showErrors(errArr);
+        }
         cb();
     });
+    
 });
 
 //静态服务器 默认端口为：8080
