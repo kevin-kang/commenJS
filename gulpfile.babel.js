@@ -76,7 +76,7 @@ gulp.task('watch', () => {
     let watcher = gulp.watch(paths, ['livereload']);
 
     watcher.on('change', event => {
-        console.log(`File ${event.path} was ${event.type}, running tasks...`);
+        console.log(gutil.colors.yellow(`File ${event.path} was ${event.type}, running tasks...`));
     });
 });
 
@@ -106,21 +106,23 @@ gulp.task('copy', ['webpack'], () => {
 let showErrors = arr => {
     let str = '',beepNum = 0;
     arr.forEach((v) => {
-        str += `${v.message}\n`;
+        str += `\n${v.message}`;
         beepNum ++;
     });
     gutil.beep(beepNum);
-    gutil.log(gutil.colors.red(`[Errors => ${arr.length}]\n${str}`));
+    gutil.log(gutil.colors.red(`[Errors => ${arr.length}]${str}`));
     
 };
 
 //webpack打包任务
 gulp.task('webpack', cb => {
+    console.log(gutil.colors.cyan('+++++++++++++ webpack Starting +++++++++++++++++'));
     return webpack(webpackConfig.default, (err, stats) => {
         if(stats.compilation.errors.length){
             let errArr = stats.compilation.errors;
             showErrors(errArr);
         }
+        console.log(gutil.colors.cyan('+++++++++++++ webpack Finished +++++++++++++++++'));
         cb();
     });
     
