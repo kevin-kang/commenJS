@@ -11,7 +11,7 @@ import opt from 'minimist'; //获取命令行参数
 let args = process.argv.slice(2),
     argsOpt = opt(args),
     basePaths = `${args[2]}` == 'undefined' ? `${args[1]}` : `${args[2]}`,
-    webpackConfig = require(`./webpack.config.${basePaths.replace(/(\/)/,'.')}.babel.js`), //根据gulp参数获取不同webpack配置文件
+    webpackConfig = require(`./webpack.config/webpack.config.${basePaths.replace(/(\/)/,'.')}.babel.js`), //根据gulp参数获取不同webpack配置文件
     devPath = `src/${basePaths}`, //开发目录
     dest = `dest/${basePaths}`, //本地编译后目录
     testPath = `test/${basePaths}`, //测试环境目录
@@ -106,8 +106,8 @@ gulp.task('copy', ['webpack'], () => {
 let showErrors = arr => {
     let str = '',beepNum = 0;
     arr.forEach((v) => {
-        str += `\n${v.message}`;
         beepNum ++;
+        str += `\n++ Error ${beepNum} ++++\n${v.message}\n-- Error Paths --\n${v.module.userRequest}\n-- Error Paths --`;
     });
     gutil.beep(beepNum);
     gutil.log(gutil.colors.red(`[Errors => ${arr.length}]${str}`));
